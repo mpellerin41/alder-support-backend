@@ -14,12 +14,13 @@ const upload = multer({
   limits: { fileSize: 25 * 1024 * 1024 }
 });
 
-// Configure email service
+// Configure email service with SendGrid
 const transporter = nodemailer.createTransport({
-  service: 'gmail',
+  host: 'smtp.sendgrid.net',
+  port: 587,
   auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASSWORD
+    user: 'apikey',
+    pass: process.env.SENDGRID_API_KEY
   }
 });
 
@@ -41,10 +42,10 @@ app.post('/api/send-support-email', upload.any(), async (req, res) => {
       content: file.buffer
     }));
 
-    console.log('Sending email to alder-it-support@askalder.com');
+    console.log('Sending email to alder-it-support@askalder.com via SendGrid');
     // Send email
     const result = await transporter.sendMail({
-      from: process.env.EMAIL_USER,
+      from: 'noreply@askalder.com',
       to: 'alder-it-support@askalder.com',
       subject: `New Support Ticket from ${name}`,
       html: `
