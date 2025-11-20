@@ -26,20 +26,24 @@ const transporter = nodemailer.createTransport({
 // Support ticket endpoint
 app.post('/api/send-support-email', upload.any(), async (req, res) => {
   try {
+    console.log('Received support ticket request');
     const { name, message } = req.body;
 
     if (!name || !message) {
+      console.log('Missing name or message');
       return res.status(400).json({ error: 'Name and message are required' });
     }
 
+    console.log('Preparing attachments...');
     // Prepare attachments
     const attachments = (req.files || []).map(file => ({
       filename: file.originalname,
       content: file.buffer
     }));
 
+    console.log('Sending email to alder-it-support@askalder.com');
     // Send email
-    await transporter.sendMail({
+    const result = await transporter.sendMail({
       from: process.env.EMAIL_USER,
       to: 'alder-it-support@askalder.com',
       subject: `New Support Ticket from ${name}`,
@@ -53,10 +57,11 @@ app.post('/api/send-support-email', upload.any(), async (req, res) => {
       attachments: attachments
     });
 
+    console.log('Email sent successfully:', result);
     res.json({ success: true, message: 'Ticket submitted successfully' });
   } catch (error) {
-    console.error('Error:', error);
-    res.status(500).json({ error: 'Failed to submit ticket' });
+    console.error('Error details:', error);
+    res.status(500).json({ error: 'Failed to submit ticket: ' + error.message });
   }
 });
 
