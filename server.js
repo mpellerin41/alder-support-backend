@@ -38,8 +38,8 @@ app.post('/api/send-support-email', upload.any(), async (req, res) => {
       content: file.buffer
     }));
 
-    // Send email with timeout
-    const emailPromise = transporter.sendMail({
+    // Send email
+    await transporter.sendMail({
       from: process.env.EMAIL_USER,
       to: 'alder-it-support@askalder.com',
       subject: `New Support Ticket from ${name}`,
@@ -53,14 +53,19 @@ app.post('/api/send-support-email', upload.any(), async (req, res) => {
       attachments: attachments
     });
 
-    await Promise.race([
-      emailPromise,
-      new Promise((_, reject) => setTimeout(() => reject(new Error('Email timeout')), 30000))
-    ]);
-
     res.json({ success: true, message: 'Ticket submitted successfully' });
   } catch (error) {
     console.error('Error:', error);
-    res.status(500).json({ error: 'Failed to submit ticket: ' + error.message });
+    res.status(500).json({ error: 'Failed to submit ticket' });
   }
+});
+
+// Health check endpoint
+app.get('/health', (req, res) => {
+  res.json({ status: 'ok' });
+});
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
 });
