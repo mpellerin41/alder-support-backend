@@ -48,7 +48,7 @@ app.post('/api/send-support-email', upload.any(), async (req, res) => {
         // --- SendGrid Web API Message Object ---
         const msg = {
             to: 'alder-it-support@askalder.com', // Recipient
-            from: process.env.SUPPORT_FROM_EMAIL || 'noreply@askalder.com', // Must be verified sender
+            from: process.env.SUPPORT_FROM_EMAIL || 'mpellerin@askalder.com', // Must be verified sender
             replyTo: senderEmail, // So your team can reply directly to the user
             subject: `[Support Ticket] New Request from ${name}`,
             html: `
