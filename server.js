@@ -17,7 +17,8 @@ const upload = multer({
 // Configure email service with SendGrid
 const transporter = nodemailer.createTransport({
   host: 'smtp.sendgrid.net',
-  port: 587,
+  port: 465,
+  secure: true,
   auth: {
     user: 'apikey',
     pass: process.env.SENDGRID_API_KEY
